@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/stevenhyh/Slambox/Slambook/ch3
+CMAKE_SOURCE_DIR = /home/yihe/Slambox/Slam/Slambook/ch3
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/stevenhyh/Slambox/Slambook/ch3/build
+CMAKE_BINARY_DIR = /home/yihe/Slambox/Slam/Slambook/ch3/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/stevenhyh/Slambox/Slambook/ch3/build/CMakeFiles /home/stevenhyh/Slambox/Slambook/ch3/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/yihe/Slambox/Slam/Slambook/ch3/build/CMakeFiles /home/yihe/Slambox/Slam/Slambook/ch3/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/stevenhyh/Slambox/Slambook/ch3/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/yihe/Slambox/Slam/Slambook/ch3/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -123,6 +123,46 @@ eigenMatrix/fast:
 	$(MAKE) -f CMakeFiles/eigenMatrix.dir/build.make CMakeFiles/eigenMatrix.dir/build
 .PHONY : eigenMatrix/fast
 
+#=============================================================================
+# Target rules for targets named eigenGeometry
+
+# Build rule for target.
+eigenGeometry: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 eigenGeometry
+.PHONY : eigenGeometry
+
+# fast build rule for target.
+eigenGeometry/fast:
+	$(MAKE) -f CMakeFiles/eigenGeometry.dir/build.make CMakeFiles/eigenGeometry.dir/build
+.PHONY : eigenGeometry/fast
+
+eigenGeometry.o: eigenGeometry.cpp.o
+
+.PHONY : eigenGeometry.o
+
+# target to build an object file
+eigenGeometry.cpp.o:
+	$(MAKE) -f CMakeFiles/eigenGeometry.dir/build.make CMakeFiles/eigenGeometry.dir/eigenGeometry.cpp.o
+.PHONY : eigenGeometry.cpp.o
+
+eigenGeometry.i: eigenGeometry.cpp.i
+
+.PHONY : eigenGeometry.i
+
+# target to preprocess a source file
+eigenGeometry.cpp.i:
+	$(MAKE) -f CMakeFiles/eigenGeometry.dir/build.make CMakeFiles/eigenGeometry.dir/eigenGeometry.cpp.i
+.PHONY : eigenGeometry.cpp.i
+
+eigenGeometry.s: eigenGeometry.cpp.s
+
+.PHONY : eigenGeometry.s
+
+# target to generate assembly for a file
+eigenGeometry.cpp.s:
+	$(MAKE) -f CMakeFiles/eigenGeometry.dir/build.make CMakeFiles/eigenGeometry.dir/eigenGeometry.cpp.s
+.PHONY : eigenGeometry.cpp.s
+
 eigenMatrix.o: eigenMatrix.cpp.o
 
 .PHONY : eigenMatrix.o
@@ -157,8 +197,12 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... eigenMatrix"
 	@echo "... edit_cache"
+	@echo "... eigenMatrix"
+	@echo "... eigenGeometry"
+	@echo "... eigenGeometry.o"
+	@echo "... eigenGeometry.i"
+	@echo "... eigenGeometry.s"
 	@echo "... eigenMatrix.o"
 	@echo "... eigenMatrix.i"
 	@echo "... eigenMatrix.s"

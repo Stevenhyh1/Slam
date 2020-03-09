@@ -5,3 +5,4 @@ include_directories("/usr/include/eigen3")
 project(eigen)
 
 add_executable(eigenMatrix eigenMatrix.cpp)
+add_executable(eigenGeometry eigenGeometry.cpp)
