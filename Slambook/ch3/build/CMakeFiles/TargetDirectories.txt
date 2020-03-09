@@ -1,4 +1,0 @@
-/home/yihe/Slambox/Slam/Slambook/ch3/build/CMakeFiles/rebuild_cache.dir
-/home/yihe/Slambox/Slam/Slambook/ch3/build/CMakeFiles/edit_cache.dir
-/home/yihe/Slambox/Slam/Slambook/ch3/build/CMakeFiles/eigenMatrix.dir
-/home/yihe/Slambox/Slam/Slambook/ch3/build/CMakeFiles/eigenGeometry.dir
