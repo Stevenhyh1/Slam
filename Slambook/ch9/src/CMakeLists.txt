@@ -1,6 +1,7 @@
 add_library(
     myvo
     camera.cpp
+    frame.cpp
 )
 
 target_link_libraries(

@@ -7,7 +7,7 @@ namespace myvo
 {
 
     class Camera {
-        private:
+        public:
             float fx_, fy_, cx_, cy_ , depth_;
 
         public:
