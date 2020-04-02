@@ -22,7 +22,7 @@ namespace myvo
             MapPoint();
             MapPoint(long id, Eigen::Vector3d position, Eigen::Vector3d norm);
 
-            static MapPoints::Ptr createMapPoint();
+            static MapPoint::Ptr createMapPoint();
     };
 }
 
