@@ -1,0 +1,32 @@
+data_path: /home/yihe/catkin_ws/src/Slam/myslam/map_data
+
+# Registartion methods
+registration_method: NDT
+
+# Local map paramters
+key_frame_distance: 2.0 
+local_frame_num: 20
+local_map_filter: voxel_filter 
+
+# Visualization filter
+display_filter: voxel_filter 
+
+# Filter for current frame
+frame_filter: voxel_filter
+
+
+# NDT Registration Parameters
+NDT:
+    res : 1.0
+    step_size : 0.1
+    trans_eps : 0.01
+    max_iter : 30
+
+# Downsmapling Parameters
+voxel_filter:
+    local_map:
+        leaf_size: [0.6, 0.6, 0.6]
+    frame:
+        leaf_size: [1.3, 1.3, 1.3]
+    display:
+        leaf_size: [0.5, 0.5, 0.5]
