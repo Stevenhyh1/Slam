@@ -186,29 +186,6 @@ void FrontEnd::UpdateNewFrame(const Frame& new_key_frame) {
     global_map_frames_.push_back(key_frame);
 }
 
-bool FrontEnd::SaveMap() {
-    global_map_ptr_.reset(new pcl::PointCloud<pcl::PointXYZ>);
-
-    std::string key_frame_path = "";
-    pcl::PointCloud<pcl::PointXYZ>::Ptr key_frmae_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
-    pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
-
-    for (size_t i=0; i<global_map_frames_.size(); ++i) {
-        key_frame_path = data_path_ + "/key_frames/key_frame_" + std::to_string(i) + ".pcd";
-        pcl::io::loadPCDFile(key_frame_path, *key_frmae_cloud_ptr);
-        pcl::transformPointCloud(*key_frmae_cloud_ptr, 
-                                 *transformed_cloud_ptr,
-                                  global_map_frames_.at(i).pose);
-        *global_map_ptr_ += *transformed_cloud_ptr;
-    }
-
-    std::string map_file_path = data_path_ + "map.pcd";
-    pcl::io::savePCDFileBinary(map_file_path, *global_map_ptr_);
-    has_new_global_map_ = true;
-
-    return true;
-}
-
 bool FrontEnd::SetInitPose(const Eigen::Matrix4f& init_pose) {
     init_pose_ = init_pose;
     return true;
@@ -239,10 +216,37 @@ bool FrontEnd::GetCurrentScan(pcl::PointCloud<pcl::PointXYZ>::Ptr &current_scan_
 
 bool FrontEnd::ReadData() {
 
+    // std::cout << "Reading point cloud data" << std::endl;
     cloud_sub_ptr_->ParseData(cloud_data_buff_);
-    gnss_sub_ptr_->ParseData(gnss_data_buff_);
-    imu_sub_ptr_->ParseData(imu_data_buff_);
+    // gnss_sub_ptr_->ParseData(gnss_data_buff_);
+    // imu_sub_ptr_->ParseData(imu_data_buff_);
+    if (cloud_data_buff_.empty()) {
+        return false;
+    }
+    double sync_time = cloud_data_buff_.front().time;
 
+    static std::deque<GNSSData> unsynced_gnss_data_;
+    static std::deque<IMUData> unsynced_imu_data_;
+
+    gnss_sub_ptr_->ParseData(unsynced_gnss_data_);
+    imu_sub_ptr_->ParseData(unsynced_imu_data_);
+
+    bool valid_gnss = GNSSData::SyncData(unsynced_gnss_data_, gnss_data_buff_, sync_time);
+    bool valid_imu = IMUData::SyncData(unsynced_imu_data_, imu_data_buff_, sync_time);
+
+    // if (!valid_gnss) std::cout << "No valid gnss" << std::endl;
+    // if (!valid_imu) std::cout << "No valid imu" << std::endl;
+
+    static bool sensor_inited = false;
+    if (!sensor_inited) {
+        if (!valid_gnss || !valid_imu) {
+            cloud_data_buff_.pop_front();
+            // std::cout << "No valid interpolation" << std::endl;
+            return false;
+        }
+        sensor_inited = true;
+    }
+    // std::cout << "Valid interpolation" << std::endl;
     return true;
 }
 
@@ -289,7 +293,6 @@ bool FrontEnd::ValidData() {
         gnss_data_buff_.pop_front();
         imu_data_buff_.pop_front();
         return false;
-
     } 
     // Coming approximately the same time
     cloud_data_buff_.pop_front();
@@ -347,12 +350,78 @@ bool FrontEnd::PublishData() {
     }
 }
 
-bool FrontEnd::Run() {
-    ReadData();
+bool FrontEnd::SaveMap() {
+    global_map_ptr_.reset(new pcl::PointCloud<pcl::PointXYZ>);
 
+    std::string key_frame_path = "";
+    pcl::PointCloud<pcl::PointXYZ>::Ptr key_frmae_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
+
+    for (size_t i=0; i<global_map_frames_.size(); ++i) {
+        key_frame_path = data_path_ + "/key_frames/key_frame_" + std::to_string(i) + ".pcd";
+        pcl::io::loadPCDFile(key_frame_path, *key_frmae_cloud_ptr);
+        pcl::transformPointCloud(*key_frmae_cloud_ptr, 
+                                 *transformed_cloud_ptr,
+                                  global_map_frames_.at(i).pose);
+        *global_map_ptr_ += *transformed_cloud_ptr;
+    }
+
+    std::string map_file_path = data_path_ + "map.pcd";
+    pcl::io::savePCDFileBinary(map_file_path, *global_map_ptr_);
+    has_new_global_map_ = true;
+
+    return true;
+}
+
+bool FrontEnd::SaveTrajectory() {
+    static std::string trajectory_path = data_path_ + "/trajectories";
+    static std::string gnss_file_name = trajectory_path + "/gnss_data.txt";
+    static std::string odom_file_name = trajectory_path + "/odom_data.txt";
+    static bool is_file_created = false;
+    static std::ofstream gnss_file, odom_file;
+
+    if (!is_file_created) {
+        if (!FileManager::CreateDirectory(trajectory_path)) {
+            return false;
+        }
+        if (!FileManager::CreateFile(gnss_file, gnss_file_name)) {
+            return false;
+        }
+        if (!FileManager::CreateFile(odom_file, odom_file_name)) {
+            return false;
+        }
+        is_file_created = true;
+    }
+
+    for (int i=0; i<3; ++i) {
+        for (int j=0; j<4; ++j) {
+            // std::cout << "writing to file" << std::endl;
+            gnss_file << gnss_odometry_(i, j);
+            odom_file << lidar_odometry_(i, j);
+            // if reaches the end of the transformation matrix
+            if (i == 2 && j == 3) {
+                gnss_file << std::endl;
+                odom_file << std::endl;
+            } else {
+                gnss_file << " ";
+                odom_file << " ";
+            }
+        }
+    }
+
+    return true;
+
+}
+
+bool FrontEnd::Run() {
     if (!InitCalibration()) {
         return false;
     }
+
+    if (!ReadData()) {
+        return false;
+    }
+    // ReadData();
 
     if (!InitGNSS()) {
         return false;
@@ -366,6 +435,7 @@ bool FrontEnd::Run() {
         UpdateGNSSOdometry();
         if (UpdataLaserOdometry()) {
             PublishData();
+            SaveTrajectory();
         }
     }
     return true;

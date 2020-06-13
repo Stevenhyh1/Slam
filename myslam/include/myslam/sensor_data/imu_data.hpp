@@ -1,18 +1,15 @@
 #ifndef MYSLAM_SENSOR_DATA_IMU_DATA_HPP_
 #define MYSLAM_SENSOR_DATA_IMU_DATA_HPP_
 
+#include <cmath>
+#include <queue>
 #include <Eigen/Dense>
 
 namespace myslam {
 class IMUData
 {
-
 public:
-    IMUData():
-        linear_acceleration({0,0,0}), 
-        angular_velocity({0,0,0}),
-        orientation({0,0,0,0})
-        {}
+    IMUData();
 
     struct LinearAcceleration 
     {
@@ -24,9 +21,19 @@ public:
         double x, y, z;
     };
 
-    struct Orientation
+    class Orientation
     {
+    public:
+        
         double x, y, z, w;
+
+        void Normalize() {
+            double norm = std::sqrt(x*x + y*y + z*z + w*w);
+            x /= norm;
+            y /= norm;
+            z /= norm;
+            w /= norm;
+        }
     };
 
     double time = 0.0;
@@ -34,13 +41,8 @@ public:
     AngularVelocity angular_velocity;
     Orientation orientation;
     
-    Eigen::Matrix3f GetOrientationMatrix() {
-        Eigen::Quaterniond q(orientation.w, orientation.x, orientation.y, orientation.z);
-        Eigen::Matrix3f matrix = q.matrix().cast<float>();
-
-        return matrix;
-    }
-    
+    Eigen::Matrix3f GetOrientationMatrix();
+    static bool SyncData(std::deque<IMUData>& UnsyncedData, std::deque<IMUData>& SyncedData, double sync_time);
 };
 } // namespace myslam
 

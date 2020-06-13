@@ -1,0 +1,1 @@
+evo_ape kitti map_data/trajectories/gnss_data.txt map_data/trajectories/odom_data.txt -r trans_part -p --plot_mode xyz

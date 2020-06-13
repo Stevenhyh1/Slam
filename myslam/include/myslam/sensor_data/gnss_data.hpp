@@ -1,6 +1,7 @@
 #ifndef MYSLAM_SENSOR_DATA_GNSS_DATA_HPP_
 #define MYSLAM_SENSOR_DATA_GNSS_DATA_HPP_
 
+#include <queue>
 #include <string>
 #include <vector>
 
@@ -21,6 +22,7 @@ public:
 
     void InitOriginPosition();
     void UpdateXYZ();
+    static bool SyncData(std::deque<GNSSData>& UnsyncedData, std::deque<GNSSData>& SyncedData, double sync_time);
 
 private:
     static GeographicLib::LocalCartesian geo_converter;

@@ -2,6 +2,7 @@
 #define MYSLAM_FRONT_END_FRONT_END_HPP_
 
 #include <deque>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <yaml-cpp/yaml.h>
@@ -25,6 +26,7 @@
 #include "myslam/tf_listener/tf_listener.hpp"
 #include "myslam/publisher/cloud_publisher.hpp"
 #include "myslam/publisher/odometry_publisher.hpp"
+#include "myslam/tools/file_manager.hpp"
 
 namespace myslam {
 class FrontEnd
@@ -45,6 +47,7 @@ public:
     // Interfaces
     bool Run();
     bool SaveMap();
+    bool SaveTrajectory();
     bool PublishGlobalMap();
     bool GetNewLocalMap(pcl::PointCloud<pcl::PointXYZ>::Ptr &local_map_ptr);
     bool GetNewGlobalMap(pcl::PointCloud<pcl::PointXYZ>::Ptr &global_map_ptr);

@@ -152,12 +152,14 @@ include(cmake/YAML.cmake)
 # list(REMOVE_ITEM ALL_SRCS ${NODE_SRCS})
 # MESSAGE( STATUS "variable is: " ${ALL_SRCS} )
 
-add_executable(test_node src/test_node.cpp src/sensor_data/gnss_data.cpp src/subscriber/cloud_subscriber.cpp src/subscriber/imu_subscriber.cpp src/subscriber/gnss_subscriber.cpp
-               src/tf_listener/tf_listener.cpp src/publisher/cloud_publisher.cpp src/publisher/odometry_publisher.cpp)
+# add_executable(test_node src/test_node.cpp src/sensor_data/gnss_data.cpp src/subscriber/cloud_subscriber.cpp src/subscriber/imu_subscriber.cpp src/subscriber/gnss_subscriber.cpp
+#                src/tf_listener/tf_listener.cpp src/publisher/cloud_publisher.cpp src/publisher/odometry_publisher.cpp)
                
-add_executable(front_end_node src/front_end_node.cpp src/sensor_data/gnss_data.cpp src/subscriber/cloud_subscriber.cpp src/subscriber/imu_subscriber.cpp src/subscriber/gnss_subscriber.cpp
+add_executable(front_end_node src/front_end_node.cpp src/sensor_data/gnss_data.cpp src/sensor_data/imu_data.cpp
+               src/subscriber/cloud_subscriber.cpp src/subscriber/imu_subscriber.cpp src/subscriber/gnss_subscriber.cpp
                src/tf_listener/tf_listener.cpp src/publisher/cloud_publisher.cpp src/publisher/odometry_publisher.cpp src/front_end/front_end.cpp
-               src/models/cloud_filter/voxel_filter.cpp src/models/registration/ndt_registration.cpp)
+               src/models/cloud_filter/voxel_filter.cpp src/models/registration/ndt_registration.cpp
+               src/tools/file_manager.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -170,10 +172,10 @@ add_executable(front_end_node src/front_end_node.cpp src/sensor_data/gnss_data.c
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(test_node
-  ${catkin_LIBRARIES}
-  ${ALL_TARGET_LIBRARIES}
-)
+# target_link_libraries(test_node
+#   ${catkin_LIBRARIES}
+#   ${ALL_TARGET_LIBRARIES}
+# )
 
 target_link_libraries(front_end_node
   ${catkin_LIBRARIES}
