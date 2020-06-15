@@ -18,11 +18,11 @@ bool DistortionAdjust::AdjustCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cl
     Eigen::AngleAxisf rotate_vector(start_orientation, Eigen::Vector3f::UnitZ()); // Rotate around z axis by theta
     Eigen::Matrix3f rotate_matrix = rotate_vector.toRotationMatrix(); // R_sb
     Eigen::Matrix4f transformation_matrix = Eigen::Matrix4f::Identity();
-    transformation_matrix.block<3,3>(0, 0) = rotate_matrix.inverse(); // G_bs
+    transformation_matrix.block<3,3>(0, 0) = rotate_matrix.transpose(); // G_bs
     pcl::transformPointCloud(*origin_cloud_ptr, *origin_cloud_ptr, transformation_matrix); // points are wrt. rotated frame
 
-    velocity_ = rotate_matrix * velocity_;
-    angular_rate_ = rotate_matrix * angular_rate_;
+    velocity_ = rotate_matrix.transpose() * velocity_;
+    angular_rate_ = rotate_matrix.transpose() * angular_rate_;
 
     for (size_t i = 1; i < origin_cloud_ptr->points.size(); ++i) {
         float orientaion = atan2(origin_cloud_ptr->points[i].y, origin_cloud_ptr->points[i].x);
