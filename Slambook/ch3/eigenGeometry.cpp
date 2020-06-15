@@ -46,4 +46,14 @@ int main(int argc, char *argv[]) {
 
     v_rotated = q*v;
     cout << "Transform from quaternion: \n" << v_rotated << endl;
+
+    double x1 = 1.0, y1 = 1.0;
+    double x2 = 1.0, y2 = -1.0;
+    double x3 = -1.0, y3 = -1.0;
+    double x4 = -1.0, y4 = 1.0;
+
+    std::cout << atan2(y1, x1) << std::endl;
+    std::cout << atan2(y2, x2) << std::endl;
+    std::cout << atan2(y3, x3) << std::endl;
+    std::cout << atan2(y4, x4) << std::endl;
 }

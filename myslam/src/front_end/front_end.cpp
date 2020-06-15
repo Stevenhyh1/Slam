@@ -15,9 +15,10 @@ FrontEnd::FrontEnd(ros::NodeHandle &nh)
     global_map_ptr_(new pcl::PointCloud<pcl::PointXYZ>),
     result_cloud_ptr_(new pcl::PointCloud<pcl::PointXYZ>){
 
-    cloud_sub_ptr_ = std::make_shared<CloudSubscriber> (nh, "/kitti/velo/pointcloud", 100);
-    gnss_sub_ptr_ = std::make_shared<GNSSSubscriber> (nh, "/kitti/oxts/gps/fix", 100);
-    imu_sub_ptr_ = std::make_shared<IMUSubscriber> (nh, "kitti/oxts/imu", 100);
+    cloud_sub_ptr_ = std::make_shared<CloudSubscriber> (nh, "/kitti/velo/pointcloud", 10);
+    gnss_sub_ptr_ = std::make_shared<GNSSSubscriber> (nh, "/kitti/oxts/gps/fix", 10);
+    imu_sub_ptr_ = std::make_shared<IMUSubscriber> (nh, "/kitti/oxts/imu", 10);
+    velocity_sub_ptr_ = std::make_shared<VelocitySubscriber> (nh, "/kitti/oxts/gps/vel", 10);
     lidar_to_imu_ptr_ = std::make_shared<TFListener> (nh, "velo_link", "imu_link");
 
     cloud_pub_ptr_ = std::make_shared<CloudPublisher> (nh, "current_scan", 100, "/map");
@@ -25,6 +26,8 @@ FrontEnd::FrontEnd(ros::NodeHandle &nh)
     global_map_pub_ptr_ = std::make_shared<CloudPublisher> (nh, "global_map", 100, "/map");
     laser_odom_pub_ptr_ = std::make_shared<OdometryPublisher> (nh, "laser_odom", "map", "lidar", 100);
     gnss_pub_ptr_ = std::make_shared<OdometryPublisher> (nh, "gnss", "map", "lidar", 100);
+
+    distortion_adjust_ptr_ = std::make_shared<DistortionAdjust> ();
 
     // Default parameters
     InitWithConfig();
@@ -227,19 +230,22 @@ bool FrontEnd::ReadData() {
 
     static std::deque<GNSSData> unsynced_gnss_data_;
     static std::deque<IMUData> unsynced_imu_data_;
+    static std::deque<VelocityData> unsynced_velocity_data_;
 
     gnss_sub_ptr_->ParseData(unsynced_gnss_data_);
     imu_sub_ptr_->ParseData(unsynced_imu_data_);
+    velocity_sub_ptr_->ParseData(unsynced_velocity_data_);
 
     bool valid_gnss = GNSSData::SyncData(unsynced_gnss_data_, gnss_data_buff_, sync_time);
     bool valid_imu = IMUData::SyncData(unsynced_imu_data_, imu_data_buff_, sync_time);
+    bool valid_velocity = VelocityData::SyncData(unsynced_velocity_data_, velocity_data_buff_, sync_time);
 
     // if (!valid_gnss) std::cout << "No valid gnss" << std::endl;
     // if (!valid_imu) std::cout << "No valid imu" << std::endl;
 
     static bool sensor_inited = false;
     if (!sensor_inited) {
-        if (!valid_gnss || !valid_imu) {
+        if (!valid_gnss || !valid_imu || !valid_velocity) {
             cloud_data_buff_.pop_front();
             // std::cout << "No valid interpolation" << std::endl;
             return false;
@@ -281,6 +287,7 @@ bool FrontEnd::ValidData() {
     current_cloud_data_ = cloud_data_buff_.front();
     current_gnss_data_ = gnss_data_buff_.front();
     current_imu_data_ = imu_data_buff_.front();
+    current_velocity_data_ = velocity_data_buff_.front();
 
     double time_diff = current_cloud_data_.time - current_imu_data_.time;
     if (time_diff < -0.05) {
@@ -292,12 +299,14 @@ bool FrontEnd::ValidData() {
         // Point cloud is much later than imu
         gnss_data_buff_.pop_front();
         imu_data_buff_.pop_front();
+        velocity_data_buff_.pop_front();
         return false;
     } 
     // Coming approximately the same time
     cloud_data_buff_.pop_front();
     gnss_data_buff_.pop_front();
     imu_data_buff_.pop_front();
+    velocity_data_buff_.pop_front();
     return true;
 }
 
@@ -318,6 +327,10 @@ bool FrontEnd::UpdateGNSSOdometry() {
 bool FrontEnd::UpdataLaserOdometry() {
 
     // std::cout << "Starting laser odometry" << std::endl;
+    current_velocity_data_.TransformCoordinate(lidar_to_imu);
+    distortion_adjust_ptr_->SetMotionInfo(0.1, current_velocity_data_);
+    distortion_adjust_ptr_->AdjustCloud(current_cloud_data_.cloud_ptr, current_cloud_data_.cloud_ptr);
+    
     lidar_odometry_ = Eigen::Matrix4f::Identity();
 
     static bool front_end_pose_init = false;
@@ -344,10 +357,14 @@ bool FrontEnd::PublishData() {
     GetCurrentScan(current_scan);
     cloud_pub_ptr_->Publish(result_cloud_ptr_);
 
-    if (GetNewGlobalMap(local_map_ptr_)) {
-        std::cout << "Publishing Global map" << std::endl;
+    if (GetNewLocalMap(local_map_ptr_)) {
         local_map_pub_ptr_->Publish(local_map_ptr_);
     }
+
+    // if (GetNewGlobalMap(global_map_ptr_)) {
+    //     std::cout << "Publishing Global map" << std::endl;
+    //     global_map_pub_ptr_->Publish(global_map_ptr_);
+    // }
 }
 
 bool FrontEnd::SaveMap() {

@@ -155,10 +155,10 @@ include(cmake/YAML.cmake)
 # add_executable(test_node src/test_node.cpp src/sensor_data/gnss_data.cpp src/subscriber/cloud_subscriber.cpp src/subscriber/imu_subscriber.cpp src/subscriber/gnss_subscriber.cpp
 #                src/tf_listener/tf_listener.cpp src/publisher/cloud_publisher.cpp src/publisher/odometry_publisher.cpp)
                
-add_executable(front_end_node src/front_end_node.cpp src/sensor_data/gnss_data.cpp src/sensor_data/imu_data.cpp
-               src/subscriber/cloud_subscriber.cpp src/subscriber/imu_subscriber.cpp src/subscriber/gnss_subscriber.cpp
+add_executable(front_end_node src/front_end_node.cpp src/sensor_data/gnss_data.cpp src/sensor_data/imu_data.cpp src/sensor_data/velocity_data.cpp
+               src/subscriber/cloud_subscriber.cpp src/subscriber/imu_subscriber.cpp src/subscriber/gnss_subscriber.cpp src/subscriber/velocity_subscriber.cpp
                src/tf_listener/tf_listener.cpp src/publisher/cloud_publisher.cpp src/publisher/odometry_publisher.cpp src/front_end/front_end.cpp
-               src/models/cloud_filter/voxel_filter.cpp src/models/registration/ndt_registration.cpp
+               src/models/cloud_filter/voxel_filter.cpp src/models/registration/ndt_registration.cpp src/models/distortion_adjust/distortion_adjust.cpp
                src/tools/file_manager.cpp)
 
 ## Rename C++ executable without prefix
