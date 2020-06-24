@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <g2o/core/g2o_core_api.h>
 #include <g2o/core/base_vertex.h>
 #include <g2o/core/base_unary_edge.h>

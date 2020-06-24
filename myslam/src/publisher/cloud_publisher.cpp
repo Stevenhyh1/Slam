@@ -14,4 +14,18 @@ void CloudPublisher::Publish(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr_input
     publisher_.publish(*cloud_ptr_output);
     // ROS_INFO("Publish PointCloud");
 }
+
+void CloudPublisher::Publish(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr_input, double time) {
+    sensor_msgs::PointCloud2Ptr cloud_ptr_output(new sensor_msgs::PointCloud2());
+    pcl::toROSMsg(*cloud_ptr_input, *cloud_ptr_output);
+
+    ros::Time ros_time((float)time);
+    cloud_ptr_output->header.stamp = ros_time;
+    cloud_ptr_output->header.frame_id = frame_id_;
+    publisher_.publish(*cloud_ptr_output);
+}
+
+bool CloudPublisher::HasSubscribers() {
+    return publisher_.getNumSubscribers() != 0;
+}
 } //namespace myslam

@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     cout << "quaternion: \n" << q.coeffs() << endl;
 
     q = Eigen::Quaterniond (rotation_vector);
-    cout << "quaternion from vector: \n" << q.coeffs() << endl;
+    cout << "quaternion from vector: \n" << q.vec() << endl;
 
     v_rotated = q*v;
     cout << "Transform from quaternion: \n" << v_rotated << endl;
@@ -56,4 +56,6 @@ int main(int argc, char *argv[]) {
     std::cout << atan2(y2, x2) << std::endl;
     std::cout << atan2(y3, x3) << std::endl;
     std::cout << atan2(y4, x4) << std::endl;
+
+
 }

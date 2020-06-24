@@ -21,6 +21,8 @@ public:
     CloudPublisher(ros::NodeHandle& nh, std::string topic_name, size_t buff_size, std::string frame_id);
     CloudPublisher() = default;
     void Publish(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr_input);
+    void Publish(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr_input, double time);
+    bool HasSubscribers();
 };
 } //namespace myslam
 

@@ -6,9 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /gnss1
-        - /gnss1/Shape1
-        - /lidar_odom1
+        - /GnssOdom1/Shape1
       Splitter Ratio: 0.5
     Tree Height: 537
   - Class: rviz/Selection
@@ -73,8 +71,8 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 100
-      Name: gnss
+      Keep: 1000000
+      Name: GnssOdom
       Position Tolerance: 0.10000000149011612
       Shape:
         Alpha: 1
@@ -107,8 +105,8 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 100
-      Name: lidar_odom
+      Keep: 10000000
+      Name: LidarOdom
       Position Tolerance: 1
       Shape:
         Alpha: 1
@@ -163,16 +161,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 499.17437744140625
+      Distance: 962.3092651367188
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 135.33302307128906
-        Y: 79.50325012207031
-        Z: -1.7625700235366821
+        X: 77.07506561279297
+        Y: 4.577856540679932
+        Z: -1.8556396961212158
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -181,7 +179,7 @@ Visualization Manager:
       Pitch: 1.5697963237762451
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 4.24873161315918
+      Yaw: 4.223733425140381
     Saved: ~
 Window Geometry:
   Displays:

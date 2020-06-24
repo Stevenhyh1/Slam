@@ -1,0 +1,16 @@
+data_path: /home/yihe/catkin_ws/src/Slam/myslam/map_data
+
+key_frame_distance: 2
+
+graph_optimizer: g2o
+
+g2o:
+  use_gnss : true
+  use_loop_close : false
+  optimize_step_with_key_frame : 100
+  optimize_step_with_loop : 10
+
+g2o_param:
+    odom_edge_noise: [0.5, 0.5, 0.5, 0.001, 0.001, 0.001]
+    close_loop_noise: [2.0, 2.0, 2.0, 0.01, 0.01, 0.01]
+    gnss_noise: [2.0, 2.0, 2.0]
