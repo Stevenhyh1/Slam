@@ -5,9 +5,10 @@ key_frame_distance: 2
 graph_optimizer: g2o
 
 g2o:
-  use_gnss : true
+  use_gnss : false
   use_loop_close : false
-  optimize_step_with_key_frame : 100
+  optimize_step_with_key_frame : 50
+  optimize_step_with_gnss: 950
   optimize_step_with_loop : 10
 
 g2o_param:

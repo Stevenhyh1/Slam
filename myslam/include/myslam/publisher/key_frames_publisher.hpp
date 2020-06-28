@@ -22,7 +22,7 @@ public:
 private:
     ros::NodeHandle nh_;
     ros::Publisher publisher_;
-    nav_msgs::Path path_;
+    std::string frame_id_;
 
 }; 
 }

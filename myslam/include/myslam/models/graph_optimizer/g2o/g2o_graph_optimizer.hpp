@@ -20,6 +20,7 @@
 
 G2O_USE_TYPE_GROUP(slam3d);
 G2O_USE_OPTIMIZATION_LIBRARY(pcg);
+G2O_USE_OPTIMIZATION_LIBRARY(csparse);
 
 namespace myslam {
 class G2OGraphOptimizer: public GraphOptimizerInterface                             {

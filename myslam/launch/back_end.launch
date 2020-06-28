@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="rviz"  type="rviz"  name="rviz"  args="-d $(find myslam)/rviz/back_end.rviz"></node>
+    <node pkg="myslam" type="data_pretreat_node" name="data_pretreat_node" output="screen"></node>
+    <node pkg="myslam" type="front_end_node" name="front_end_node" output="screen"></node>
+    <node pkg="myslam" type="back_end_node" name="back_end_node" output="screen"></node>
+</launch>

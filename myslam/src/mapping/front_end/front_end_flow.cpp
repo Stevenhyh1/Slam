@@ -33,7 +33,7 @@ bool FrontEndFlow::UpdateLaserOdometry() {
 
     static bool laser_odom_inited = false;
     if (!laser_odom_inited) {
-        front_end_ptr_->SetInitPose(pose_data_buff_.front().pose);
+        front_end_ptr_->SetInitPose(Eigen::Matrix4f::Identity());
         laser_odom_inited = true;
         return front_end_ptr_->Update(current_scan_, laser_odometry_);
     }
@@ -44,7 +44,7 @@ bool FrontEndFlow::UpdateLaserOdometry() {
 bool FrontEndFlow::PublishData() {
     // LOG(INFO) << "Publishing lidar odometry: " << std::endl;
     // LOG(INFO) << laser_odometry_.block<3,1>(0,3);
-    laser_odom_pub_ptr_->Publish(laser_odometry_);
+    laser_odom_pub_ptr_->Publish(laser_odometry_, current_scan_.time);
     return true;
 }
 

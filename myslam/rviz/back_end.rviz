@@ -6,7 +6,11 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /GnssOdom1/Shape1
+        - /gnss1
+        - /gnss1/Status1
+        - /transformed_odom1
+        - /transformed_odom1/Shape1
+        - /Path1
       Splitter Ratio: 0.5
     Tree Height: 537
   - Class: rviz/Selection
@@ -71,8 +75,8 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 1000000
-      Name: GnssOdom
+      Keep: 10000
+      Name: gnss
       Position Tolerance: 0.10000000149011612
       Shape:
         Alpha: 1
@@ -87,7 +91,19 @@ Visualization Manager:
       Topic: /synced_gnss
       Unreliable: false
       Value: true
-    - Angle Tolerance: 1
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /kitti/camera_color_left/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
+    - Angle Tolerance: 0.10000000149011612
       Class: rviz/Odometry
       Covariance:
         Orientation:
@@ -105,32 +121,43 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 10000000
-      Name: LidarOdom
-      Position Tolerance: 1
+      Keep: 100
+      Name: transformed_odom
+      Position Tolerance: 0.10000000149011612
       Shape:
         Alpha: 1
         Axes Length: 1
         Axes Radius: 0.10000000149011612
-        Color: 255; 25; 0
-        Head Length: 2
-        Head Radius: 1
+        Color: 173; 127; 168
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
         Shaft Length: 1
-        Shaft Radius: 0.10000000149011612
+        Shaft Radius: 1
         Value: Arrow
-      Topic: /laser_odom
+      Topic: /transformed_odom
       Unreliable: false
       Value: true
-    - Class: rviz/Image
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 25; 255; 0
       Enabled: true
-      Image Topic: /kitti/camera_color_left/image_raw
-      Max Value: 1
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: true
-      Queue Size: 2
-      Transport Hint: raw
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: /optimized_key_frames
       Unreliable: false
       Value: true
   Enabled: true
@@ -161,16 +188,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 962.3092651367188
+      Distance: 496.4773254394531
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 77.07506561279297
-        Y: 4.577856540679932
-        Z: -1.8556396961212158
+        X: 124.47600555419922
+        Y: 155.61692810058594
+        Z: -1.699347734451294
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -179,7 +206,7 @@ Visualization Manager:
       Pitch: 1.5697963237762451
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 4.223733425140381
+      Yaw: 4.24873161315918
     Saved: ~
 Window Geometry:
   Displays:

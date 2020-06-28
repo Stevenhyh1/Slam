@@ -20,8 +20,8 @@ include_directories(
 add_executable(orb_cv orb_cv.cpp)
 target_link_libraries(orb_cv ${OpenCV_LIBS})
 
-# add_executable(orb_self orb_self.cpp)
-# target_link_libraries(orb_self ${OpenCV_LIBS})
-
 add_executable(2d2d pose_estimation_2d2d.cpp)
 target_link_libraries(2d2d ${OpenCV_LIBS})
+
+add_executable(3d3d pose_estimation_3d3d.cpp)
+target_link_libraries(3d3d ${OpenCV_LIBS} ${Sophus_LIBRARIES} g2o_core g2o_stuff)
