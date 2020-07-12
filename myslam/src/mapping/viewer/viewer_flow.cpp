@@ -1,3 +1,5 @@
+#include "glog/logging.h"
+
 #include "myslam/mapping/viewer/viewer_flow.hpp"
 
 namespace myslam {
@@ -18,30 +20,23 @@ ViewerFlow::ViewerFlow(ros::NodeHandle &nh){
 }
 
 bool ViewerFlow::Run() {
-    if (!ReadData()) {
+    if (!ReadData())
         return false;
-    }
 
-    while (HasData()) {
-        if (!ValidData()) {
-            continue;
+    while(HasData()) {
+        if (ValidData()) {
+            viewer_ptr_->UpdateWithNewKeyFrame(key_frame_buff_, current_transformed_odom_, current_cloud_data_);
+            PublishLocalData();
         }
-
-        viewer_ptr_->UpdateWithNewKeyFrame(key_frame_buff_, current_transformed_odom_, current_cloud_data_);
-        PublishLocalData();
     }
 
-    if (optimized_key_frames_.size()>0) {
+    if (optimized_key_frames_.size() > 0) {
         viewer_ptr_->UpdateWithOptimizedKeyFrames(optimized_key_frames_);
         PublishGlobalData();
     }
+
     return true;
 }
-
-bool ViewerFlow::SaveMap() {
-    return viewer_ptr_->Savemap();
-}
-
 
 bool ViewerFlow::ReadData() {
     cloud_sub_ptr_->ParseData(cloud_data_buff_);
@@ -53,7 +48,12 @@ bool ViewerFlow::ReadData() {
 }
 
 bool ViewerFlow::HasData() {
-    return !cloud_data_buff_.empty() && !transformed_odom_buff_.size();
+    if (cloud_data_buff_.size() == 0)
+        return false;
+    if (transformed_odom_buff_.size() == 0)
+        return false;
+
+    return true;
 }
 
 bool ViewerFlow::ValidData() {
@@ -84,23 +84,24 @@ bool ViewerFlow::PublishGlobalData() {
         viewer_ptr_->GetGlobalMap(cloud_ptr);
         global_map_pub_ptr_->Publish(cloud_ptr);
     }
+
     return true;
 }
 
 bool ViewerFlow::PublishLocalData() {
-    Eigen::Matrix4f current_pose;
-    viewer_ptr_->GetCurrentPose(current_pose);
-    optimized_odom_pub_ptr_->Publish(current_pose);
-
-    pcl::PointCloud<pcl::PointXYZ>::Ptr current_scan(new pcl::PointCloud<pcl::PointXYZ>());
-    viewer_ptr_->GetCurrentScan(current_scan);
-    current_scan_pub_ptr_->Publish(current_scan);
+    optimized_odom_pub_ptr_->Publish(viewer_ptr_->GetCurrentPose());
+    current_scan_pub_ptr_->Publish(viewer_ptr_->GetCurrentScan());
 
     if (viewer_ptr_->HasNewLocalMap() && local_map_pub_ptr_->HasSubscribers()) {
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>());
         viewer_ptr_->GetLocalMap(cloud_ptr);
         local_map_pub_ptr_->Publish(cloud_ptr);
     }
+
     return true;
+}
+
+bool ViewerFlow::SaveMap() {
+    return viewer_ptr_->SaveMap();
 }
 }

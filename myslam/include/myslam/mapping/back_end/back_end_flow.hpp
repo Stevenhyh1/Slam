@@ -34,6 +34,7 @@ class BackEndFlow {
 
     std::shared_ptr<OdometryPublisher> transformed_odom_pub_ptr_;
     std::shared_ptr<KeyFramePublisher> key_frame_pub_ptr_;
+    std::shared_ptr<KeyFramePublisher> key_gnss_pub_ptr_;
     std::shared_ptr<KeyFramesPublisher> key_frames_pub_ptr_;
     std::shared_ptr<BackEnd> back_end_ptr_;
 

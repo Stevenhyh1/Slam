@@ -17,6 +17,10 @@ NDTRegistration::NDTRegistration(float res, float step_size, float trans_eps, in
     SetRegistrationParam(res, step_size, trans_eps, max_iter);
 }
 
+float NDTRegistration::GetFitnessScore() {
+    return ndt_ptr_->getFitnessScore();
+}
+
 bool NDTRegistration::setInputTarget(const pcl::PointCloud<pcl::PointXYZ>::Ptr &target_cloud) {
     ndt_ptr_->setInputTarget(target_cloud);
     return true;

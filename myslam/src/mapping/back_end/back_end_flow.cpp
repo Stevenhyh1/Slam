@@ -11,6 +11,7 @@ BackEndFlow::BackEndFlow(ros::NodeHandle& nh) {
 
     transformed_odom_pub_ptr_ = std::make_shared<OdometryPublisher>(nh, "/transformed_odom", "/map", "/lidar", 100);
     key_frame_pub_ptr_ = std::make_shared<KeyFramePublisher>(nh, "/key_frame", "/map", 100);
+    key_gnss_pub_ptr_ = std::make_shared<KeyFramePublisher>(nh, "/key_gnss", "/map", 100);
     key_frames_pub_ptr_ = std::make_shared<KeyFramesPublisher>(nh, "/optimized_key_frames", "/map", 100);
 
     back_end_ptr_ = std::make_shared<BackEnd>();
@@ -104,12 +105,15 @@ bool BackEndFlow::UpdateBackEnd() {
 }
 
 bool BackEndFlow::PublishData() {
-    transformed_odom_pub_ptr_->Publish(current_laser_odom_data_.pose);
+    transformed_odom_pub_ptr_->Publish(current_laser_odom_data_.pose, current_laser_odom_data_.time);
 
     if (back_end_ptr_->HasNewKeyFrame()) {
         KeyFrame key_frame;
         back_end_ptr_->GetLatestKeyFrame(key_frame);
         key_frame_pub_ptr_->Publish(key_frame);
+
+        back_end_ptr_->GetLatestKeyGNSS(key_frame);
+        key_gnss_pub_ptr_->Publish(key_frame);
     }
 
     if (back_end_ptr_->HasNewOptimized()) {

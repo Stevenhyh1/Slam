@@ -24,6 +24,7 @@ public:
     bool HasNewKeyFrame();
     bool HasNewOptimized();
     void GetLatestKeyFrame(KeyFrame  &key_frame);
+    void GetLatestKeyGNSS(KeyFrame& key_frame);
 
 private:
     bool InitWithConfig();

@@ -59,12 +59,12 @@ bool BackEnd::InitGraphOptimizer(const YAML::Node& config_node) {
 
 bool BackEnd::InitDataPath(const YAML::Node &config_node) {
     std::string data_path = config_node["data_path"].as<std::string>();
-    if (!FileManager::CreateDirectory(data_path + "/slam_data")) {
+    if (!FileManager::CreateDirectory(data_path)) {
         return false;
     }
 
-    key_frames_path_ = data_path + "/slam_data/key_frames";
-    trajectory_path_ = data_path + "/slam_data/trajectory";
+    key_frames_path_ = data_path + "/key_frames";
+    trajectory_path_ = data_path + "/trajectory";
 
     if (!FileManager::CreateDirectory(key_frames_path_))
         return false;
@@ -226,5 +226,9 @@ bool BackEnd::HasNewOptimized() {
 
 void BackEnd::GetLatestKeyFrame(KeyFrame  &key_frame) {
     key_frame = current_key_frame_;
+}
+
+void BackEnd::GetLatestKeyGNSS(KeyFrame& key_frame) {
+    key_frame = current_key_gnss_;
 }
 } //namespace myslam

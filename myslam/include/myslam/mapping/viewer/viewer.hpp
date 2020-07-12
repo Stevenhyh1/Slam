@@ -25,9 +25,9 @@ public:
     bool UpdateWithOptimizedKeyFrames(std::deque<KeyFrame> &optimized_key_frames);
     bool UpdateWithNewKeyFrame(std::deque<KeyFrame> &new_key_frames, PoseData transformed_data, CloudData cloud_data);
 
-    bool Savemap();
-    bool GetCurrentPose(Eigen::Matrix4f &current_pose);
-    bool GetCurrentScan(pcl::PointCloud<pcl::PointXYZ>::Ptr &current_scan);
+    bool SaveMap();
+    Eigen::Matrix4f& GetCurrentPose();
+    pcl::PointCloud<pcl::PointXYZ>::Ptr& GetCurrentScan();
     bool GetLocalMap(pcl::PointCloud<pcl::PointXYZ>::Ptr &local_map_ptr);
     bool GetGlobalMap (pcl::PointCloud<pcl::PointXYZ>::Ptr &global_map_ptr);
     bool HasNewLocalMap();
@@ -36,22 +36,23 @@ public:
 private:
     
     std::string data_path_ = "";
+    int local_frame_num_ = 20;
+
     std::string key_frames_path_ = "";
     std::string map_path_ = "";
-    int local_frame_nums_;
 
     std::shared_ptr<CloudFilterInterface> frame_filter_ptr_;
     std::shared_ptr<CloudFilterInterface> local_map_filter_ptr_;
     std::shared_ptr<CloudFilterInterface> global_map_filter_ptr_;
 
-    Eigen::Matrix4f origin_to_optimize_ = Eigen::Matrix4f::Identity();
+    Eigen::Matrix4f pose_to_optimize_ = Eigen::Matrix4f::Identity();
     PoseData optimized_odom_;
     CloudData optimized_cloud_;
     std::deque<KeyFrame> optimized_key_frames_;
     std::deque<KeyFrame> all_key_frames_;
 
-    bool new_global_map_ = false;
-    bool new_local_map_ = false;
+    bool has_new_global_map_ = false;
+    bool has_new_local_map_ = false;
     
     bool InitWithConfig();
     bool InitParam(const YAML::Node &config_node);
